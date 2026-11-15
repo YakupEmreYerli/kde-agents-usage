@@ -1,0 +1,105 @@
+<!doctype html>
+<!-- Source of .github/assets/banner.<lang>.png (1280x640; the English one is also
+     the GitHub social preview). Open with ?lang=en or ?lang=tr in a 1280x640
+     viewport and take a screenshot. All numbers are sample data. -->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  /* Breeze Light palette */
+  :root { --ink: #232629; --dim: #5d6368; --faint: #7f8c8d; --window: #eff0f1; --view: #fcfcfc; --line: #c4c9cd;
+          --blue: #3daee9; --orange: #f67400; --track: #d8dcdf; }
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1280px; height: 640px; overflow: hidden; background: var(--window); color: var(--ink);
+         font-family: "Noto Sans", sans-serif; position: relative; }
+  .shape { position: absolute; }
+  .left { position: absolute; left: 96px; top: 150px; }
+  .logo { width: 76px; height: 76px; display: block; }
+  h1 { margin-top: 34px; font-size: 76px; font-weight: 300; letter-spacing: -1.5px; line-height: 1; }
+  h1 b { font-weight: 700; }
+  .tag { font-size: 24px; line-height: 36px; margin-top: 22px; color: var(--dim); }
+  .kind { margin-top: 30px; font-size: 15px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--blue); }
+
+  .popup { position: absolute; right: 110px; top: 22px; width: 400px; height: 532px; background: var(--view);
+           border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 14px 40px rgba(35,38,41,.22); overflow: hidden; }
+  .tabs { display: flex; height: 44px; border-bottom: 1px solid var(--line); font-size: 15px; background: var(--window); }
+  .tabs div { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--dim); }
+  .tabs .on { color: var(--ink); box-shadow: inset 0 -3px var(--blue); }
+  .prov { padding: 13px 20px 5px; border-bottom: 1px solid #e3e5e7; }
+  .prov:last-child { border-bottom: 0; }
+  .name { font-size: 18px; display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .plan { font-size: 12px; color: #1d7fb3; background: rgba(61,174,233,.14); border: 1px solid rgba(61,174,233,.55); padding: 1px 9px; border-radius: 12px; }
+  .row { margin-bottom: 10px; }
+  .row .top { display: flex; justify-content: space-between; font-size: 15px; }
+  .row .pct { font-size: 17px; }
+  .bar { height: 6px; border-radius: 3px; background: var(--track); margin: 6px 0 4px; }
+  .bar i { display: block; height: 100%; border-radius: 3px; background: var(--blue); }
+  .warn .bar i { background: var(--orange); }
+  .warn .pct { color: var(--orange); }
+  .reset { font-size: 13px; color: var(--faint); }
+
+  .panel { position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: var(--view); border-top: 1px solid var(--line);
+           display: flex; align-items: center; justify-content: flex-end; gap: 22px; padding-right: 110px; }
+  .dot { width: 22px; height: 22px; border-radius: 6px; background: #c9cdd1; }
+  .tray { width: 50px; height: 42px; border-radius: 6px; background: rgba(61,174,233,.22); border: 1px solid var(--blue); display: flex;
+          flex-direction: column; justify-content: center; gap: 5px; padding: 0 11px; }
+  .tray b { display: block; height: 5px; border-radius: 3px; background: #b9c0c5; }
+  .tray b i { display: block; height: 100%; border-radius: 3px; background: var(--blue); }
+  .clock { font-size: 17px; margin-left: 12px; color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="shape" style="right:-150px;top:-150px;width:560px;height:560px;border-radius:50%;background:var(--blue)"></div>
+<div class="shape" style="left:590px;top:404px;width:120px;height:120px;border-radius:50%;background:var(--orange)"></div>
+<div class="shape" style="left:650px;top:92px;width:100px;height:100px;background-image:radial-gradient(var(--ink) 2px,transparent 2.4px);background-size:20px 20px"></div>
+<div class="shape" style="left:0;top:0;width:14px;height:640px;background:var(--ink)"></div>
+
+<div class="left">
+  <img class="logo" src="../.github/assets/logo.svg" alt="">
+  <h1><b>Agents</b> Usage</h1>
+  <p class="tag" id="tag"></p>
+  <p class="kind" id="kind"></p>
+</div>
+
+<div class="popup">
+  <div class="tabs"><div class="on" id="t1"></div><div id="t2"></div></div>
+  <div id="provs"></div>
+</div>
+
+<div class="panel">
+  <div class="tray">
+    <b><i style="width:76%"></i></b>
+    <b><i style="width:34%;background:var(--orange)"></i></b>
+    <b><i style="width:82%"></i></b>
+  </div>
+  <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  <div class="clock">7:23 PM</div>
+</div>
+
+<script>
+const T = {
+  en: { tag: ["Claude, Codex and Grok limits", "in your KDE panel."], sub: "One bar per provider, at a glance.",
+        kind: "KDE Plasma 6 widget", limits: "Limits", tokens: "Tokens", h5: "5 hours", wk: "Weekly",
+        hm: (h, m) => `resets in ${h} h ${m} min`, dh: (d, h) => `resets in ${d} d ${h} h`, clock: "7:23 PM" },
+  tr: { tag: ["Claude, Codex ve Grok limitleri", "KDE panelinizde."], sub: "Her sağlayıcıya bir çizgi, tek bakışta.",
+        kind: "KDE Plasma 6 widget'ı", limits: "Limitler", tokens: "Tokenlar", h5: "5 saat", wk: "Haftalık",
+        hm: (h, m) => `${h} sa ${m} dk sonra sıfırlanır`, dh: (d, h) => `${d} gün ${h} sa sonra sıfırlanır`, clock: "19:23" },
+};
+const t = T[new URLSearchParams(location.search).get("lang") || "en"];
+const data = [
+  ["Claude", "Max", [[t.h5, 76, t.hm(3, 10)], [t.wk, 58, t.dh(3, 4)]]],
+  ["Codex", "Plus", [[t.h5, 34, t.hm(1, 45)], [t.wk, 52, t.dh(2, 6)]]],
+  ["Grok", "SuperGrok", [[t.wk, 82, t.dh(4, 2)]]],
+];
+document.getElementById("tag").innerHTML = t.tag.join("<br>") + `<br>${t.sub}`;
+document.getElementById("kind").textContent = t.kind;
+document.getElementById("t1").textContent = t.limits;
+document.getElementById("t2").textContent = t.tokens;
+document.querySelector(".clock").textContent = t.clock;
+document.getElementById("provs").innerHTML = data.map(([name, plan, rows]) =>
+  `<div class="prov"><div class="name">${name}<span class="plan">${plan}</span></div>` + rows.map(([label, left, reset]) =>
+    `<div class="row${left <= 40 ? " warn" : ""}"><div class="top"><span>${label}</span><span class="pct">${left}%</span></div>
+     <div class="bar"><i style="width:${left}%"></i></div><div class="reset">${reset}</div></div>`).join("") + "</div>").join("");
+</script>
+</body>
+</html>
