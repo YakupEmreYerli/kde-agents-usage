@@ -58,7 +58,7 @@ cd kde-agents-usage
 
 Then add "Agents Usage" to a panel (right click the panel, Add Widgets), or open the system tray arrow, Configure System Tray, and set it to always shown. To update, run `git pull && ./install.sh` and restart Plasma with `systemctl --user restart plasma-plasmashell`.
 
-The fork keeps the original widget id, so installing it replaces the original widget in place.
+The fork has its own widget id, so it installs next to the original instead of replacing it.
 
 ## Tests
 

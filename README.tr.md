@@ -54,7 +54,7 @@ cd kde-agents-usage
 
 Sonra "Ajan Limitleri"ni bir panele ekleyin (panele sağ tıklayıp Widget Ekle) ya da sistem tepsisindeki oktan Sistem Tepsisini Yapılandır'ı açıp "her zaman göster" yapın. Güncellemek için `git pull && ./install.sh` çalıştırıp Plasma'yı `systemctl --user restart plasma-plasmashell` ile yeniden başlatın.
 
-Fork asıl widget'ın kimliğini korur; kurunca asıl widget'ın yerine geçer.
+Forkun kendi widget kimliği var; asıl widget'ın yerine geçmez, yanına kurulur.
 
 ## Testler
 

@@ -1,11 +1,11 @@
 {
     "KPlugin": {
-        "Authors": [{ "Name": "Yusuf İpek" }],
+        "Authors": [{ "Name": "Yusuf İpek" }, { "Name": "Yakup Emre Yerli" }],
         "Category": "System Information",
         "Description": "Remaining usage limits for Claude, OpenAI Codex and Grok",
         "Description[tr]": "Claude, OpenAI Codex ve Grok için kalan kullanım limitleri",
         "Icon": "speedometer",
-        "Id": "io.github.yusufipk.agentsusage",
+        "Id": "io.github.yakupemreyerli.agentsusage",
         "License": "MIT",
         "Name": "Agents Usage",
         "Name[tr]": "Ajan Limitleri",
