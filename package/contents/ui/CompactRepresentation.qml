@@ -1,29 +1,36 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Shapes
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents3
 import org.kde.kirigami as Kirigami
 
-// Panel / system tray icon: a ring showing the worst remaining quota.
+// Panel / system tray icon: one bar per provider showing the remaining share
+// of its 5-hour window (weekly when the provider has no 5-hour window).
 MouseArea {
     id: compact
 
     readonly property bool vertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool planar: Plasmoid.formFactor === PlasmaCore.Types.Planar
-    readonly property real remaining: root.worstRemaining
-    readonly property bool known: remaining >= 0
-    readonly property real fraction: known ? Math.max(0, Math.min(1, remaining / 100)) : 0
-    readonly property color tone: {
-        if (!known)
-            return Kirigami.Theme.disabledTextColor;
-        if (remaining < 15)
+    // Remaining percentage per provider, -1 when unknown.
+    readonly property var bars: {
+        if (!root.usage || !root.usage.providers)
+            return [];
+        return root.usage.providers.map(p => {
+            const windows = p.windows || [];
+            const w = windows.find(x => x.key === "session") || windows.find(x => x.key === "weekly") || windows[0];
+            return w ? 100 - w.usedPercent : -1;
+        });
+    }
+    readonly property bool known: bars.some(left => left >= 0)
+
+    function tone(left) {
+        if (left < 15)
             return Kirigami.Theme.negativeTextColor;
-        if (remaining <= 40)
+        if (left <= 40)
             return Kirigami.Theme.neutralTextColor;
         return Kirigami.Theme.highlightColor;
     }
+
     readonly property real size: Math.min(width, height)
 
     Layout.minimumWidth: vertical ? Kirigami.Units.iconSizes.small : height
@@ -51,84 +58,49 @@ MouseArea {
         active: compact.containsMouse
     }
 
-    Shape {
-        id: ring
+    Column {
+        id: lines
 
-        readonly property real stroke: Math.max(2, Math.round(width / 9))
-        readonly property real radius: width / 2 - stroke / 2
-        readonly property real inner: width - stroke * 2
+        readonly property real thickness: Math.max(2, Math.round(compact.size / 7))
 
         anchors.centerIn: parent
         width: compact.size
-        height: width
+        spacing: Math.max(1, Math.round((compact.size - thickness * compact.bars.length) / (compact.bars.length + 1)))
         visible: compact.known
-        antialiasing: true
-        preferredRendererType: Shape.CurveRenderer
         opacity: compact.containsMouse ? 1 : 0.9
 
         Behavior on opacity {
             NumberAnimation { duration: Kirigami.Units.shortDuration }
         }
 
-        // Track
-        ShapePath {
-            strokeColor: Qt.alpha(Kirigami.Theme.textColor, 0.25)
-            strokeWidth: ring.stroke
-            fillColor: "transparent"
-            capStyle: ShapePath.FlatCap
+        Repeater {
+            model: compact.bars
 
-            PathAngleArc {
-                centerX: ring.width / 2
-                centerY: ring.height / 2
-                radiusX: ring.radius
-                radiusY: ring.radius
-                startAngle: -90
-                sweepAngle: 360
-            }
-        }
+            // Track
+            Rectangle {
+                required property real modelData
 
-        // Remaining share, clockwise from the top
-        ShapePath {
-            strokeColor: compact.tone
-            strokeWidth: ring.stroke
-            fillColor: "transparent"
-            capStyle: ShapePath.RoundCap
+                width: lines.width
+                height: lines.thickness
+                radius: height / 2
+                color: Qt.alpha(Kirigami.Theme.textColor, 0.25)
 
-            PathAngleArc {
-                centerX: ring.width / 2
-                centerY: ring.height / 2
-                radiusX: ring.radius
-                radiusY: ring.radius
-                startAngle: -90
-                sweepAngle: 360 * compact.fraction
+                // Remaining share, from the left
+                Rectangle {
+                    visible: parent.modelData > 0
+                    width: Math.max(height, parent.width * Math.min(1, parent.modelData / 100))
+                    height: parent.height
+                    radius: height / 2
+                    color: compact.tone(parent.modelData)
 
-                Behavior on sweepAngle {
-                    NumberAnimation {
-                        duration: Kirigami.Units.longDuration
-                        easing.type: Easing.OutCubic
+                    Behavior on width {
+                        NumberAnimation {
+                            duration: Kirigami.Units.longDuration
+                            easing.type: Easing.OutCubic
+                        }
                     }
                 }
             }
-        }
-
-        // Number when there is room, otherwise a status dot.
-        PlasmaComponents3.Label {
-            anchors.centerIn: parent
-            visible: ring.inner >= 18
-            text: Math.round(compact.remaining)
-            font.pixelSize: Math.max(6, Math.round(ring.inner * 0.5))
-            font.bold: true
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-
-        Rectangle {
-            anchors.centerIn: parent
-            visible: ring.inner < 18
-            width: Math.max(2, Math.round(ring.inner * 0.35))
-            height: width
-            radius: width / 2
-            color: compact.tone
         }
     }
 }

@@ -11,22 +11,6 @@ PlasmoidItem {
     property bool loading: false
     property string lastError: ""
 
-    // Smallest remaining percentage across every window of every provider,
-    // or -1 when nothing is known yet. Drives the tray icon.
-    readonly property real worstRemaining: {
-        if (!usage || !usage.providers)
-            return -1;
-        let worst = -1;
-        for (const p of usage.providers) {
-            for (const w of (p.windows || [])) {
-                const left = 100 - w.usedPercent;
-                if (worst < 0 || left < worst)
-                    worst = left;
-            }
-        }
-        return worst;
-    }
-
     // Parsed output of token_stats.py: { generatedAt, scanning, daily, periods }
     property var tokens: null
     property bool tokensLoading: false
